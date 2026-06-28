@@ -1,0 +1,16 @@
+{
+    "HighVelocityTyping": [
+        {
+            "behavior": "Input velocity spiked to {current_kpm} KPM within {current_app}.",
+            "conclusion_label": "Risk Assessment",
+            "conclusion_text": "Subject is operating at maximum cognitive output. Risk of critical syntactical errors elevated."
+        }
+    ],
+    "BackspaceBurst": [
+        {
+            "behavior": "Anomalous correction burst detected ({backspace_count} strikes) in {current_app}.",
+            "conclusion_label": "Temporal Analysis",
+            "conclusion_text": "Elevated correction behaviour suggests implementation uncertainty. Subject is second-guessing the established future."
+        }
+    ]
+}

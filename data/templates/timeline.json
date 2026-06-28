@@ -1,0 +1,10 @@
+{
+    "TimelineStateChanged": [
+        "CRITICAL INCIDENT ALERT\nTimeline state has shifted from {old_state} to {new_state}.\nTemporal containment protocols adjusting.",
+        "FUTURE NOTIFICATION\nState degraded to {new_state}. The future is becoming unclear."
+    ],
+    "TimelineStabilityChanged": [
+        "TIMELINE STABILITY SHIFT\nCurrent stability: {new_value}%.\nCause: {reason}.",
+        "STABILITY UPDATE\nAdjusting timeline confidence to {new_value}%."
+    ]
+}

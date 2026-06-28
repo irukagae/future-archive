@@ -1,0 +1,16 @@
+{
+    "IdleStarted": [
+        {
+            "behavior": "Terminal inputs ceased. Subject has entered a physical hibernation state.",
+            "conclusion_label": "Forecast",
+            "conclusion_text": "Timeline progression paused. Expecting natural decay in active stability until subject re-engages."
+        }
+    ],
+    "IdleEnded": [
+        {
+            "behavior": "Subject re-engaged with terminal interfaces after {formatted_duration} of inactivity.",
+            "conclusion_label": "Recovery Assessment",
+            "conclusion_text": "Continuity restored. Baseline projections re-established as timeline resumes forward momentum."
+        }
+    ]
+}

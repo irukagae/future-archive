@@ -1,0 +1,35 @@
+{
+    "WindowChanged_coding_to_browser": [
+        {
+            "behavior": "Subject temporarily abandoned Coding Sector. Destination confirmed: {current_app}.",
+            "conclusion_label": "Temporal Analysis",
+            "conclusion_text": "Likely research activity. Workflow divergence is assumed temporary. Monitoring for return to baseline."
+        }
+    ],
+    "WindowChanged_coding_to_media": [
+        {
+            "behavior": "Subject redirected workflow from Coding Sector to Entertainment Systems ({current_app}).",
+            "conclusion_label": "Risk Assessment",
+            "conclusion_text": "Productivity temporarily suspended. Prolonged exposure to this sector historically degrades timeline stability."
+        }
+    ],
+    "WindowChanged_browser_to_coding": [
+        {
+            "behavior": "Subject completed external knowledge acquisition and returned to {current_app}.",
+            "conclusion_label": "Forecast",
+            "conclusion_text": "Research phase complete. Timeline expected to stabilize naturally as active development resumes."
+        }
+    ],
+    "WindowChanged": [
+        {
+            "behavior": "Subject departed {prev_sector} Sector and entered {current_sector} Sector. Target context: {current_app}.",
+            "conclusion_label": "Historical Record",
+            "conclusion_text": "This behavioural pattern appears in approximately 74% of recovered Subject archives. Routine deviation."
+        },
+        {
+            "behavior": "Sector Shift recorded. Subject relocated workflow to {current_app}.",
+            "conclusion_label": "Administrative Note",
+            "conclusion_text": "Transition logged successfully. Future confidence models adjusting based on destination."
+        }
+    ]
+}
