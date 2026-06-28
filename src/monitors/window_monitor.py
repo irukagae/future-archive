@@ -50,7 +50,7 @@ class WindowMonitor:
             "Cursor.exe": "Cursor",
 
             # Media & Entertainment
-            "spotify.exe": "Spotify",
+            "Spotify.exe": "Spotify",
             "vlc.exe": "VLC Media Player",
             "obs64.exe": "OBS Studio",
             "Steam.exe": "Steam",
