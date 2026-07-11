@@ -5,6 +5,7 @@ import datetime
 from core.event_bus import EventBus, EventTypes
 from core.timeline import TimelineEngine
 from core.temporal_memory import TemporalMemory
+from core.prediction_engine import PredictionEngine
 from monitors.window_monitor import WindowMonitor
 from monitors.keyboard_monitor import KeyboardMonitor
 from monitors.idle_monitor import IdleMonitor
@@ -12,45 +13,48 @@ from narrative.template_engine import TemplateEngine
 
 
 def get_ordinal(n):
-    """Helper to convert 3 to '3rd', 4 to '4th', etc."""
-    if 11 <= (n % 100) <= 13:
-        return str(n) + 'th'
+    if 11 <= (n % 100) <= 13: return str(n) + 'th'
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
 
 
 def create_transmission_subscriber(template_engine, timeline_engine, memory):
-    last_stability = 85  # Local baseline tracker
+    last_stability = 85
 
     def subscriber(event_type, payload):
         nonlocal last_stability
 
-        primary_events = [
-            EventTypes.WINDOW_CHANGED,
-            EventTypes.HIGH_VELOCITY_TYPING,
-            EventTypes.BACKSPACE_BURST,
-            EventTypes.IDLE_STARTED,
-            EventTypes.IDLE_ENDED
-        ]
-        if event_type not in primary_events:
+        # Ignore standalone stability events as usual
+        if event_type in [EventTypes.TIMELINE_STABILITY_CHANGED, EventTypes.TIMELINE_STATE_CHANGED]:
             return
+
+        # 1. Visual Presentation Headers based on event type
+        header = "████████ TEMPORAL TRANSMISSION ████████"
+        is_prediction_event = False
+
+        if event_type == EventTypes.PREDICTION_REGISTERED:
+            header = "████████ TEMPORAL FORECAST ████████"
+            is_prediction_event = True
+        elif event_type == EventTypes.PREDICTION_VERIFIED:
+            header = "████████ PREDICTION VERIFIED ████████"
+            is_prediction_event = True
+        elif event_type == EventTypes.PREDICTION_AVERTED:
+            header = "████████ TIMELINE DEVIATION ████████"
+            is_prediction_event = True
 
         is_transition = (event_type == EventTypes.WINDOW_CHANGED)
         specific_template_key = event_type
 
-        # 1. Memory Integration Logic
+        # 2. Contextual Template Key Resolution
         if event_type == EventTypes.WINDOW_CHANGED:
             app_visits = memory.get_app_visits(memory.current_app)
             dominant_sector = memory.get_most_visited_sector()
 
-            # Determine if this is a repetitive behavioral loop
             if app_visits >= 3:
-                # If they are mostly hanging out in a non-coding sector, call it out
                 if memory.current_sector == dominant_sector and memory.current_sector not in ["Coding", "System"]:
                     specific_template_key = "WindowChanged_Dominant_Deviation"
                 else:
                     specific_template_key = "WindowChanged_Repeated"
             else:
-                # Fallback to standard contextual keys (e.g., Coding to Browser)
                 p_sec = memory.prev_sector.lower()
                 c_sec = memory.current_sector.lower()
                 specific_template_key = f"WindowChanged_{p_sec}_to_{c_sec}"
@@ -59,7 +63,7 @@ def create_transmission_subscriber(template_engine, timeline_engine, memory):
             if memory.idle_count >= 3:
                 specific_template_key = "IdleEnded_Repeated"
 
-        # 2. Extract Stability Metrics
+        # 3. Stability Metrics
         new_stability = timeline_engine.score
         delta = new_stability - last_stability
 
@@ -74,11 +78,11 @@ def create_transmission_subscriber(template_engine, timeline_engine, memory):
         else:
             severity = "CRITICAL"
 
-        # 3. Future Temporal Presentation
+        # 4. Temporal Presentation Dates
         now = datetime.datetime.now()
         future_date = now.replace(year=now.year + 21)
 
-        # 4. Build Memory-Enriched Payload
+        # 5. Build Rich Payload
         rich_payload = dict(payload)
         rich_payload.update({
             "tx_id": f"TR-83B-{random.randint(10000, 99999)}",
@@ -98,20 +102,27 @@ def create_transmission_subscriber(template_engine, timeline_engine, memory):
             "current_sector": memory.current_sector,
             "visit_count": memory.get_app_visits(memory.current_app),
             "visit_count_ordinal": get_ordinal(memory.get_app_visits(memory.current_app)),
-            "dominant_sector": memory.get_most_visited_sector(),
-            "idle_count_ordinal": get_ordinal(memory.idle_count)
+            "dominant_sector": memory.get_most_visited_sector()
         })
 
-        # 5. Generate Transmission
+        # 6. Generate Transmission Text
         transmission = template_engine.generate_transmission(specific_template_key, rich_payload)
         if not transmission:
             transmission = template_engine.generate_transmission(event_type, rich_payload)
 
+        # 7. Print with Dynamic Header Frame
         if transmission:
-            print(f"\n{transmission}\n")
+            # We replace the default transmission header generated by the template engine
+            # with our specialized prediction headers if necessary.
+            lines = transmission.split("\n")
+            lines[0] = header
+            final_output = "\n".join(lines)
 
-        # 6. Finalize State
-        last_stability = new_stability
+            print(f"\n{final_output}\n")
+
+        # 8. Finalize State
+        if not is_prediction_event:
+            last_stability = new_stability
 
     return subscriber
 
@@ -124,16 +135,14 @@ def main():
 
     bus = EventBus()
 
-    # ORDER OF REGISTRATION MATTERS:
-    # 1. Timeline calculates the score
-    # 2. Memory tracks the facts
-    # 3. Subscriber generates the story using the updated facts
     timeline_engine = TimelineEngine(bus)
     memory = TemporalMemory(bus)
+    prediction_engine = PredictionEngine(bus, memory)  # <-- NEW
     template_engine = TemplateEngine(templates_dir)
 
     narrative_subscriber = create_transmission_subscriber(template_engine, timeline_engine, memory)
 
+    # Subscribe to ALL primary and prediction events
     for event_type in dir(EventTypes):
         if not event_type.startswith("__"):
             bus.subscribe(getattr(EventTypes, event_type), narrative_subscriber)
@@ -144,8 +153,9 @@ def main():
 
     keyboard_monitor.start()
 
-    print("\nIntegration Test Active. Temporal Memory Engaged.")
-    print("Test Memory by entering the same application multiple times.")
+    print("\nIntegration Test Active. Temporal Oracle Engaged.")
+    print("To test Predictions: Go to VS Code and spam Backspace.")
+    print("Wait to see Forecast. Then switch to Chrome to Verify it (or wait 90s to Avert it).")
     print("Press Ctrl+C to terminate.\n")
 
     try:
@@ -154,6 +164,7 @@ def main():
             keyboard_monitor.poll()
             idle_monitor.poll()
             timeline_engine.poll()
+            prediction_engine.poll()  # <-- NEW: Polls for expired predictions
             time.sleep(0.5)
 
     except KeyboardInterrupt:

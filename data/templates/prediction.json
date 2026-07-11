@@ -1,0 +1,38 @@
+{
+    "PredictionRegistered": [
+        {
+            "behavior": "Recovered archives indicate a {confidence}% probability of the following event: {expected_behavior}.",
+            "conclusion_label": "Temporal Forecast",
+            "conclusion_text": "Awaiting subject alignment with Timeline 83-B parameters within {time_window} seconds."
+        },
+        {
+            "behavior": "Future behaviour modeled. Anticipating: {expected_behavior} (Confidence: {confidence}%).",
+            "conclusion_label": "Observation",
+            "conclusion_text": "This behavioural inevitability is heavily documented in the temporal archives."
+        }
+    ],
+    "PredictionVerified": [
+        {
+            "behavior": "Predicted event ({expected_behavior}) occurred exactly as archived.",
+            "conclusion_label": "Temporal Analysis",
+            "conclusion_text": "Subject lacks free will. Timeline 83-B remains fully intact and predictable."
+        },
+        {
+            "behavior": "Subject executed {expected_behavior}. Forecast confirmed.",
+            "conclusion_label": "Historical Record",
+            "conclusion_text": "The future unfolds precisely as written. Confidence in timeline trajectory increased."
+        }
+    ],
+    "PredictionAverted": [
+        {
+            "behavior": "Subject failed to execute {expected_behavior} within the predicted temporal window.",
+            "conclusion_label": "Risk Assessment",
+            "conclusion_text": "Subject deviated from the archived future. Timeline 83-B has been altered. Future observers express cautious optimism."
+        },
+        {
+            "behavior": "Archived forecast ({expected_behavior}) was averted by subject inaction or deviation.",
+            "conclusion_label": "Temporal Analysis",
+            "conclusion_text": "Destiny overwritten. The subject is exercising free will against historical norms."
+        }
+    ]
+}
