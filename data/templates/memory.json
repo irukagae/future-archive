@@ -1,0 +1,28 @@
+{
+    "WindowChanged_Repeated": [
+        {
+            "behavior": "Subject returned to {current_app} for the {visit_count_ordinal} time this session.",
+            "conclusion_label": "Temporal Analysis",
+            "conclusion_text": "Pattern of repeated divergence detected. Subject appears to be looping through known pathways."
+        },
+        {
+            "behavior": "Sector Shift recorded. Subject has entered the {current_sector} Sector {visit_count} times today.",
+            "conclusion_label": "Historical Record",
+            "conclusion_text": "Repetitive transition loops historically indicate a search for external data or a loss of workflow momentum."
+        }
+    ],
+    "WindowChanged_Dominant_Deviation": [
+        {
+            "behavior": "Subject relocated to {current_app}. The {current_sector} Sector has now become the dominant operational environment.",
+            "conclusion_label": "Risk Assessment",
+            "conclusion_text": "Original timeline baseline has been compromised by sustained attention in non-essential environments."
+        }
+    ],
+    "IdleEnded_Repeated": [
+        {
+            "behavior": "Subject re-engaged with the terminal. This marks the {idle_count_ordinal} hibernation cycle of the current session.",
+            "conclusion_label": "Forecast",
+            "conclusion_text": "Frequent pauses suggest cognitive fatigue or timeline resistance. Baseline projections adjusting."
+        }
+    ]
+}
