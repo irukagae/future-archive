@@ -1,0 +1,30 @@
+{
+    "generic": [
+        "Archive Annotation\nRecovered File: 17-A",
+        "Cross-reference:\nSubject Zero file updated.",
+        "Internal Memo\nTemporal Containment Bureau\nReview Pending.",
+        "Observer Protocol\nActive monitoring continues.",
+        "Reference Detected\nIncident 2047.\nClassification: Restricted.",
+        "Continuity Office\nRoutine baseline check completed."
+    ],
+    "anomaly": [
+        "Archive Annotation:\nBehaviour resembles archived Delta patterns.",
+        "Continuity Office:\nWarning: Pre-collapse markers detected.",
+        "Cross-reference:\nSubject Zero exhibited similar instability prior to The First Collapse."
+    ],
+    "prediction_verified": [
+        "Reference:\nRecovered behaviour perfectly matches Project Delta Archive 17-A.",
+        "Recovery Division:\nTimeline 83-B integrity holding.",
+        "Internal Memo (Containment Bureau):\nSubject predictability remains at baseline. Proceed with Observer Protocol."
+    ],
+    "prediction_averted": [
+        "Internal Memo:\nUnexpected divergence. Observer review requested.",
+        "Containment Bureau:\nSubject Zero deviation confirmed. Adjusting models.",
+        "Critical Alert:\nDeviation overlaps with Incident 2047 parameters."
+    ],
+    "repeated_loop": [
+        "Cross-reference:\nSubject Zero exhibited the same pattern during the 2047 cycle.",
+        "Archive Annotation:\nRepetitive looping is a known precursor to Temporal Decay.",
+        "Recovery Division:\nMonitoring for localized timeline collapse."
+    ]
+}
