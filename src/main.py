@@ -2,23 +2,37 @@ import os
 import time
 import random
 import datetime
+import threading
+import sys
+
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import pyqtSignal, QObject
+
 from core.event_bus import EventBus, EventTypes
 from core.timeline import TimelineEngine
 from core.temporal_memory import TemporalMemory
 from core.prediction_engine import PredictionEngine
 from narrative.template_engine import TemplateEngine
-from narrative.lore_engine import LoreEngine  # <-- NEW IMPORT
+from narrative.lore_engine import LoreEngine
 from monitors.window_monitor import WindowMonitor
 from monitors.keyboard_monitor import KeyboardMonitor
 from monitors.idle_monitor import IdleMonitor
+from ui.overlay import TemporalOverlay  # <-- NEW IMPORT
 
 
+# --- THREAD SAFETY BRIDGE ---
+class SignalBridge(QObject):
+    """Safely transports strings from the background polling thread to the main GUI thread."""
+    transmission_ready = pyqtSignal(str)
+
+
+# --- NARRATIVE SUBSCRIBER ---
 def get_ordinal(n):
     if 11 <= (n % 100) <= 13: return str(n) + 'th'
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
 
 
-def create_transmission_subscriber(template_engine, timeline_engine, memory, lore_engine):
+def create_transmission_subscriber(template_engine, timeline_engine, memory, lore_engine, signal_bridge):
     last_stability = 85
 
     def subscriber(event_type, payload):
@@ -107,11 +121,11 @@ def create_transmission_subscriber(template_engine, timeline_engine, memory, lor
             lines = transmission.split("\n")
             lines[0] = header
             transmission = "\n".join(lines)
-
-            # --- NEW: INJECT ARCHAEOLOGICAL LORE ---
             transmission = lore_engine.process(transmission, event_type, rich_payload)
 
+            # Print to console for debugging, but ALSO emit to the UI!
             print(f"\n{transmission}\n")
+            signal_bridge.transmission_ready.emit(transmission)
 
         if not is_prediction_event:
             last_stability = new_stability
@@ -119,9 +133,9 @@ def create_transmission_subscriber(template_engine, timeline_engine, memory, lor
     return subscriber
 
 
-def main():
-    print("Initializing Temporal Core Architecture...")
-
+# --- BACKGROUND MONITORING LOOP ---
+def run_backend(signal_bridge):
+    """This function runs indefinitely in a background thread."""
     current_dir = os.path.dirname(os.path.abspath(__file__))
     templates_dir = os.path.join(current_dir, '..', 'data', 'templates')
 
@@ -130,12 +144,11 @@ def main():
     memory = TemporalMemory(bus)
     prediction_engine = PredictionEngine(bus, memory)
     template_engine = TemplateEngine(templates_dir)
-
-    # We initialize the LoreEngine with an 8% chance per transmission
-    # (For immediate testing, you can change 0.08 to 1.0 temporarily)
     lore_engine = LoreEngine(templates_dir, injection_chance=0.08)
 
-    narrative_subscriber = create_transmission_subscriber(template_engine, timeline_engine, memory, lore_engine)
+    narrative_subscriber = create_transmission_subscriber(
+        template_engine, timeline_engine, memory, lore_engine, signal_bridge
+    )
 
     for event_type in dir(EventTypes):
         if not event_type.startswith("__"):
@@ -146,11 +159,7 @@ def main():
     idle_monitor = IdleMonitor(bus, idle_threshold_seconds=5.0)
 
     keyboard_monitor.start()
-
-    print("\nIntegration Test Active. Classified Lore Subsystem Engaged.")
-    print("NOTE: Lore appears rarely (~8% of the time).")
-    print("Switch windows or trigger anomalies repeatedly to eventually intercept lore.")
-    print("Press Ctrl+C to terminate.\n")
+    print("[Backend] Temporal Monitors Active. Awaiting events...")
 
     try:
         while True:
@@ -160,11 +169,37 @@ def main():
             timeline_engine.poll()
             prediction_engine.poll()
             time.sleep(0.5)
-
-    except KeyboardInterrupt:
-        pass
+    except Exception as e:
+        print(f"Backend Thread Error: {e}")
     finally:
         keyboard_monitor.stop()
+
+
+# --- MAIN GUI BOOTSTRAP ---
+def main():
+    print("Initializing Temporal Core Architecture...")
+
+    # 1. Initialize the PyQt Application
+    app = QApplication(sys.argv)
+
+    # 2. Initialize the UI Overlay
+    overlay = TemporalOverlay()
+
+    # 3. Create the Thread-Safety Bridge
+    bridge = SignalBridge()
+    # Connect the bridge signal to the overlay's display method
+    bridge.transmission_ready.connect(overlay.display_transmission)
+
+    # 4. Start the Backend on a separate daemon thread
+    backend_thread = threading.Thread(target=run_backend, args=(bridge,), daemon=True)
+    backend_thread.start()
+
+    print("\nIntegration Test Active. Desktop Overlay Engaged.")
+    print("Switch windows or type fast. The transmission will appear in the top right of your screen.")
+    print("Close the terminal or press Ctrl+C to terminate the program.\n")
+
+    # 5. Start the GUI Event Loop (This blocks until the app closes)
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
